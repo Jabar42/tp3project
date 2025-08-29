@@ -1,6 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+function useCountUp(target: number, trigger: number, duration = 800) {
+    const [value, setValue] = useState<number>(0);
+    useEffect(() => {
+        let frameId = 0;
+        const start = performance.now();
+        const startValue = 0;
+        const tick = (now: number) => {
+            const progress = Math.min(1, (now - start) / duration);
+            const next = startValue + (target - startValue) * progress;
+            setValue(next);
+            if (progress < 1) {
+                frameId = requestAnimationFrame(tick);
+            }
+        };
+        setValue(0);
+        frameId = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(frameId);
+    }, [target, trigger, duration]);
+    return value;
+}
 
 export default function ContadorRoi() {
     const [monthlyVisitors, setMonthlyVisitors] = useState<number>(5000);
@@ -13,6 +34,8 @@ export default function ContadorRoi() {
     const conversionImprovementPoints = 2; // puntos porcentuales
 
     const [showResults, setShowResults] = useState<boolean>(false);
+    const [calcTrigger, setCalcTrigger] = useState<number>(0);
+    const resultsRef = useRef<HTMLDivElement>(null);
 
     const {
         currentConversionRate,
@@ -84,7 +107,24 @@ export default function ContadorRoi() {
 
     const handleCalculate = () => {
         setShowResults(true);
+        setCalcTrigger((t) => t + 1);
+        setTimeout(() => {
+            resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 50);
     };
+
+    const currentConvPctAnim = useCountUp(currentConversionRate * 100, calcTrigger);
+    const projectedConvPctAnim = useCountUp(projectedConversionRate * 100, calcTrigger);
+    const conversionLiftAnim = useCountUp(conversionLiftPercent, calcTrigger);
+    const currentSalesAnim = useCountUp(currentMonthlySales, calcTrigger);
+    const projectedSalesAnim = useCountUp(projectedMonthlySales, calcTrigger);
+    const salesDeltaAnim = useCountUp(salesDelta, calcTrigger);
+    const currentRevenueAnim = useCountUp(currentMonthlyRevenue, calcTrigger);
+    const projectedRevenueAnim = useCountUp(projectedMonthlyRevenue, calcTrigger);
+    const revenueDeltaAnim = useCountUp(revenueDelta, calcTrigger);
+    const roiAnim = useCountUp(isFinite(roiPercentageFirstYear) ? roiPercentageFirstYear : 0, calcTrigger);
+    const paybackAnim = useCountUp(isFinite(paybackMonths) ? paybackMonths : 0, calcTrigger);
+    const annualBenefitAnim = useCountUp(annualBenefit, calcTrigger);
 
     return (
         <section className="bg-gradient-to-br from-blue-50 to-purple-50 p-8 mb-12">
@@ -111,7 +151,7 @@ export default function ContadorRoi() {
                                     inputMode="numeric"
                                     value={monthlyVisitors}
                                     onChange={(e) => setMonthlyVisitors(Number(e.target.value))}
-                                    className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                                    className="w-full px-3 sm:px-4 py-2 border border-gray-400 text-gray-900 placeholder:text-gray-600 bg-white rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm sm:text-base"
                                 />
                             </div>
                             
@@ -125,7 +165,7 @@ export default function ContadorRoi() {
                                     inputMode="decimal"
                                     value={currentConversionPercentage}
                                     onChange={(e) => setCurrentConversionPercentage(Number(e.target.value))}
-                                    className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                                    className="w-full px-3 sm:px-4 py-2 border border-gray-400 text-gray-900 placeholder:text-gray-600 bg-white rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm sm:text-base"
                                 />
                             </div>
                             
@@ -138,7 +178,7 @@ export default function ContadorRoi() {
                                     inputMode="decimal"
                                     value={averageProductPrice}
                                     onChange={(e) => setAverageProductPrice(Number(e.target.value))}
-                                    className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                                    className="w-full px-3 sm:px-4 py-2 border border-gray-400 text-gray-900 placeholder:text-gray-600 bg-white rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm sm:text-base"
                                 />
                             </div>
                             
@@ -154,7 +194,7 @@ export default function ContadorRoi() {
                                     value={operationalCostPerProduct}
                                     onChange={(e) => setOperationalCostPerProduct(Number(e.target.value))}
                                     placeholder="Ej: costos de envío, comisiones, etc."
-                                    className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                                    className="w-full px-3 sm:px-4 py-2 border border-gray-400 text-gray-900 placeholder:text-gray-600 bg-white rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm sm:text-base"
                                 />
                                 <p className="text-xs text-gray-500 mt-1">Incluye la sumatoria de costos de envío, comisiones de pago, packaging, etc.</p>
                             </div>
@@ -196,6 +236,7 @@ export default function ContadorRoi() {
                             (showResults ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full pointer-events-none")
                         }
                         id="results-section"
+                        ref={resultsRef}
                     >
                         <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">🎯 Resultados de tu Optimización</h3>
                         <p className="text-gray-600 mb-4 text-sm sm:text-base">Con nuestra optimización, tu página generará:</p>
@@ -213,33 +254,33 @@ export default function ContadorRoi() {
                                 <tbody className="divide-y divide-gray-100">
                                     <tr>
                                         <td className="py-2 sm:py-3 font-medium text-xs sm:text-sm">Tasa de Conversión</td>
-                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatPercent(currentConversionRate * 100, 1)}</td>
-                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatPercent(projectedConversionRate * 100, 1)}</td>
-                                        <td className="text-center py-2 sm:py-3 text-green-600 font-semibold text-xs sm:text-sm">{formatPercent(conversionLiftPercent, 0)}</td>
+                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatPercent(currentConvPctAnim, 1)}</td>
+                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatPercent(projectedConvPctAnim, 1)}</td>
+                                        <td className="text-center py-2 sm:py-3 text-green-600 font-semibold text-xs sm:text-sm">{formatPercent(conversionLiftAnim, 0)}</td>
                                     </tr>
                                     <tr>
                                         <td className="py-2 sm:py-3 font-medium text-xs sm:text-sm">Ventas Mensuales</td>
-                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatNumber(currentMonthlySales)}</td>
-                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatNumber(projectedMonthlySales)}</td>
-                                        <td className="text-center py-2 sm:py-3 text-green-600 font-semibold text-xs sm:text-sm">+{formatNumber(salesDelta)} ventas</td>
+                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatNumber(Math.round(currentSalesAnim))}</td>
+                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatNumber(Math.round(projectedSalesAnim))}</td>
+                                        <td className="text-center py-2 sm:py-3 text-green-600 font-semibold text-xs sm:text-sm">+{formatNumber(Math.round(salesDeltaAnim))} ventas</td>
                                     </tr>
                                     <tr>
                                         <td className="py-2 sm:py-3 font-medium text-xs sm:text-sm">Ingresos Mensuales</td>
-                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatCurrency(currentMonthlyRevenue)}</td>
-                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatCurrency(projectedMonthlyRevenue)}</td>
-                                        <td className="text-center py-2 sm:py-3 text-green-600 font-semibold text-xs sm:text-sm">+{formatCurrency(revenueDelta)}/mes</td>
+                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatCurrency(Math.round(currentRevenueAnim))}</td>
+                                        <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">{formatCurrency(Math.round(projectedRevenueAnim))}</td>
+                                        <td className="text-center py-2 sm:py-3 text-green-600 font-semibold text-xs sm:text-sm">+{formatCurrency(Math.round(revenueDeltaAnim))}/mes</td>
                                     </tr>
                                     <tr className="bg-green-50">
                                         <td className="py-2 sm:py-3 font-bold text-xs sm:text-sm">ROI (Primer Año)</td>
                                         <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">-</td>
                                         <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">-</td>
-                                        <td className="text-center py-2 sm:py-3 text-green-600 font-bold text-sm sm:text-lg">{isFinite(roiPercentageFirstYear) ? `+${formatPercent(roiPercentageFirstYear, 0)}` : "-"}</td>
+                                        <td className="text-center py-2 sm:py-3 text-green-600 font-bold text-sm sm:text-lg">{isFinite(roiPercentageFirstYear) ? `+${formatPercent(roiAnim, 0)}` : "-"}</td>
                                     </tr>
                                     <tr className="bg-blue-50">
                                         <td className="py-2 sm:py-3 font-bold text-xs sm:text-sm">Recuperación de Inversión</td>
                                         <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">-</td>
                                         <td className="text-center py-2 sm:py-3 text-xs sm:text-sm">-</td>
-                                        <td className="text-center py-2 sm:py-3 text-blue-600 font-bold text-sm sm:text-lg">{isFinite(paybackMonths) ? `${paybackMonths.toFixed(2)} meses` : "N/A"}</td>
+                                        <td className="text-center py-2 sm:py-3 text-blue-600 font-bold text-sm sm:text-lg">{isFinite(paybackMonths) ? `${paybackAnim.toFixed(2)} meses` : "N/A"}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -252,7 +293,7 @@ export default function ContadorRoi() {
                                 </svg>
                                 <span className="font-semibold text-green-800 text-sm sm:text-base">Beneficio Anual Proyectado:</span>
                             </div>
-                            <p className="text-xl sm:text-2xl font-bold text-green-800">{formatCurrency(annualBenefit)}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-green-800">{formatCurrency(Math.round(annualBenefitAnim))}</p>
                             <p className="text-xs sm:text-sm text-green-700 mt-1">Basado en un aumento de +{conversionImprovementPoints} pp de conversión</p>
                         </div>
 
@@ -265,7 +306,7 @@ export default function ContadorRoi() {
                                     </svg>
                                     <div>
                                         <p className="font-semibold text-blue-800 mb-1 text-sm sm:text-base">💰 Recuperación de Inversión</p>
-                                        <p className="text-blue-700 text-xs sm:text-sm">{isFinite(paybackMonths) ? `Recuperas la inversión en ${paybackMonths.toFixed(2)} meses.` : "Aún no hay recuperación con los datos actuales."}</p>
+                                        <p className="text-blue-700 text-xs sm:text-sm">{isFinite(paybackMonths) ? `Recuperas la inversión en ${paybackAnim.toFixed(2)} meses.` : "Aún no hay recuperación con los datos actuales."}</p>
                                     </div>
                                 </div>
                             </div>
@@ -277,7 +318,7 @@ export default function ContadorRoi() {
                                     </svg>
                                     <div>
                                         <p className="font-semibold text-purple-800 mb-1 text-sm sm:text-base">📈 Impacto en Ventas</p>
-                                        <p className="text-purple-700 text-xs sm:text-sm">Ventas mensuales aumentan en +{formatNumber(salesDelta)}.</p>
+                                        <p className="text-purple-700 text-xs sm:text-sm">Ventas mensuales aumentan en +{formatNumber(Math.round(salesDeltaAnim))}.</p>
                                     </div>
                                 </div>
                             </div>
@@ -289,7 +330,7 @@ export default function ContadorRoi() {
                                     </svg>
                                     <div>
                                         <p className="font-semibold text-green-800 mb-1 text-sm sm:text-base">💵 Ingresos Adicionales</p>
-                                        <p className="text-green-700 text-xs sm:text-sm">Ingresos mensuales +{formatCurrency(revenueDelta)} (antes de inversión).</p>
+                                        <p className="text-green-700 text-xs sm:text-sm">Ingresos mensuales +{formatCurrency(Math.round(revenueDeltaAnim))} (antes de inversión).</p>
                                     </div>
                                 </div>
                             </div>
@@ -301,7 +342,7 @@ export default function ContadorRoi() {
                                     </svg>
                                     <div>
                                         <p className="font-semibold text-yellow-800 mb-1 text-sm sm:text-base">⚡ Retorno de Inversión</p>
-                                        <p className="text-yellow-700 text-xs sm:text-sm">ROI del primer año {isFinite(roiPercentageFirstYear) ? `+${roiPercentageFirstYear.toFixed(0)}%` : "N/A"}.</p>
+                                        <p className="text-yellow-700 text-xs sm:text-sm">ROI del primer año {isFinite(roiPercentageFirstYear) ? `+${roiAnim.toFixed(0)}%` : "N/A"}.</p>
                                     </div>
                                 </div>
                             </div>
