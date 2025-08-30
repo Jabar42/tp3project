@@ -110,7 +110,7 @@ export default function ContadorRoi() {
         setCalcTrigger((t) => t + 1);
         setTimeout(() => {
             resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 50);
+        }, 90);
     };
 
     const currentConvPctAnim = useCountUp(currentConversionRate * 100, calcTrigger);
@@ -126,11 +126,17 @@ export default function ContadorRoi() {
     const paybackAnim = useCountUp(isFinite(paybackMonths) ? paybackMonths : 0, calcTrigger);
     const annualBenefitAnim = useCountUp(annualBenefit, calcTrigger);
 
+    // Métricas derivadas para el resumen contextual
+    const paybackDays = isFinite(paybackMonths) ? paybackMonths * 30 : Infinity;
+    const paybackDaysAnim = useCountUp(isFinite(paybackDays) ? paybackDays : 0, calcTrigger);
+    const returnMultiple = optimizationInvestment > 0 ? annualBenefit / optimizationInvestment : 0;
+    const returnMultipleAnim = useCountUp(returnMultiple, calcTrigger);
+
     return (
         <section className="bg-gradient-to-br from-blue-50 to-purple-50 p-8 mb-12">
             <div className="max-w-4xl mx-auto">
                 <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">
-                    🧮 Calcula el ROI de Optimizar tu Página de Producto
+                    Calcula el ROI de Optimizar tu Página de Producto
                 </h2>
                 <p className="text-lg text-gray-600 text-center mb-8">
                     Descubre cuánto podrías ganar implementando optimizaciones clave
@@ -224,7 +230,7 @@ export default function ContadorRoi() {
                                 onClick={handleCalculate}
                                 className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-4 sm:px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
                             >
-                                🧮 Calcular ROI
+                                Calcular ROI
                             </button>
                         </div>
                     </div>
@@ -238,7 +244,7 @@ export default function ContadorRoi() {
                         id="results-section"
                         ref={resultsRef}
                     >
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">🎯 Resultados de tu Optimización</h3>
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">Resultados de tu Optimización</h3>
                         <p className="text-gray-600 mb-4 text-sm sm:text-base">Con nuestra optimización, tu página generará:</p>
                         
                         <div className="overflow-x-auto">
@@ -305,8 +311,8 @@ export default function ContadorRoi() {
                                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path>
                                     </svg>
                                     <div>
-                                        <p className="font-semibold text-blue-800 mb-1 text-sm sm:text-base">💰 Recuperación de Inversión</p>
-                                        <p className="text-blue-700 text-xs sm:text-sm">{isFinite(paybackMonths) ? `Recuperas la inversión en ${paybackAnim.toFixed(2)} meses.` : "Aún no hay recuperación con los datos actuales."}</p>
+                                        <p className="font-semibold text-blue-800 mb-1 text-sm sm:text-base">Recuperación de Inversión</p>
+                                        <p className="text-blue-700 text-xs sm:text-sm">{isFinite(paybackDays) ? `Tu inversión de ${formatCurrency(optimizationInvestment)} se recupera en ~${Math.round(paybackDaysAnim)} días (${paybackAnim.toFixed(2)} meses).` : "Aún no hay recuperación con los datos actuales."}</p>
                                     </div>
                                 </div>
                             </div>
@@ -317,8 +323,8 @@ export default function ContadorRoi() {
                                         <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path>
                                     </svg>
                                     <div>
-                                        <p className="font-semibold text-purple-800 mb-1 text-sm sm:text-base">📈 Impacto en Ventas</p>
-                                        <p className="text-purple-700 text-xs sm:text-sm">Ventas mensuales aumentan en +{formatNumber(Math.round(salesDeltaAnim))}.</p>
+                                        <p className="font-semibold text-purple-800 mb-1 text-sm sm:text-base">Impacto en Ventas</p>
+                                        <p className="text-purple-700 text-xs sm:text-sm">Pasas de {formatNumber(currentMonthlySales)} a {formatNumber(projectedMonthlySales)} ventas/mes. ¡a1+{formatNumber(Math.round(salesDeltaAnim))} ventas cada mes!</p>
                                     </div>
                                 </div>
                             </div>
@@ -329,8 +335,8 @@ export default function ContadorRoi() {
                                         <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path>
                                     </svg>
                                     <div>
-                                        <p className="font-semibold text-green-800 mb-1 text-sm sm:text-base">💵 Ingresos Adicionales</p>
-                                        <p className="text-green-700 text-xs sm:text-sm">Ingresos mensuales +{formatCurrency(Math.round(revenueDeltaAnim))} (antes de inversión).</p>
+                                        <p className="font-semibold text-green-800 mb-1 text-sm sm:text-base">Ingresos Adicionales</p>
+                                        <p className="text-green-700 text-xs sm:text-sm">Ventas brutas +{formatCurrency(Math.round(revenueDeltaAnim))}/mes. Beneficio neto +{formatCurrency(Math.round(monthlyProfitDelta))}/mes. En 12 meses: {formatCurrency(Math.round(annualBenefit))} extra.</p>
                                     </div>
                                 </div>
                             </div>
@@ -341,8 +347,8 @@ export default function ContadorRoi() {
                                         <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd"></path>
                                     </svg>
                                     <div>
-                                        <p className="font-semibold text-yellow-800 mb-1 text-sm sm:text-base">⚡ Retorno de Inversión</p>
-                                        <p className="text-yellow-700 text-xs sm:text-sm">ROI del primer año {isFinite(roiPercentageFirstYear) ? `+${roiAnim.toFixed(0)}%` : "N/A"}.</p>
+                                        <p className="font-semibold text-yellow-800 mb-1 text-sm sm:text-base">Retorno de Inversión</p>
+                                        <p className="text-yellow-700 text-xs sm:text-sm">{isFinite(roiPercentageFirstYear) ? `Por cada €1 invertido recuperas €${returnMultipleAnim.toFixed(1)} el primer año. ROI ${roiAnim.toFixed(0)}%.` : "N/A"}</p>
                                     </div>
                                 </div>
                             </div>
