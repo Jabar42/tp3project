@@ -20,16 +20,16 @@ export default function ProblemHook() {
 
             <div className="grid md:grid-cols-3 gap-8 mb-12">
                 <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="text-3xl font-bold text-red-600 mb-2">78%</div>
-                    <p className="text-gray-600 text-sm">de visitantes abandonan webs lentas</p>
+                    <div className="text-3xl font-bold text-red-600 mb-2">500%</div>
+                    <p className="text-gray-600 text-sm">Mejora máxima conseguida en un solo test A/B</p>
                 </div>
                 <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="text-3xl font-bold text-red-600 mb-2">€2,847</div>
-                    <p className="text-gray-600 text-sm">perdidos mensualmente por mala conversión</p>
+                    <div className="text-3xl font-bold text-red-600 mb-2">+32%</div>
+                    <p className="text-gray-600 text-sm">Promedio de mejora relativa en conversiones de nuestros clientes</p>
                 </div>
                 <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="text-3xl font-bold text-red-600 mb-2">65h</div>
-                    <p className="text-gray-600 text-sm">semanales trabajando en tareas manuales</p>
+                    <div className="text-3xl font-bold text-red-600 mb-2">12,000+ tests</div>
+                    <p className="text-gray-600 text-sm">Experimentos analizados para perfeccionar nuestra metodología</p>
                 </div>
             </div>
 
