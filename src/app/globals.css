@@ -46,3 +46,6 @@ body { font-family: 'Poppins', sans-serif; }
 .image-marquee-item { flex: 0 0 calc((100% - (9 * var(--marquee-gap))) / 10); max-width: calc((100% - (9 * var(--marquee-gap))) / 10); }
 .image-marquee-img { width: 100%; height: auto; display: block; object-fit: contain; }
 @keyframes marquee-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+/* Google Font utility class */
+.font-caveat { font-family: var(--font-caveat), "Caveat", cursive; }
