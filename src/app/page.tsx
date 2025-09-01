@@ -2,7 +2,7 @@ import AdvertorialBanner from "@/components/AdvertorialBanner";
 import Header from "@/components/Header";
 import ProblemHook from "@/components/ProblemHook";
 import TheRealProblem from "@/components/TheRealProblem";
-import ContadorRoi from "@/components/ContadorRoi";
+//import ContadorRoi from "@/components/ContadorRoi";
 
 
 export default function Home() {
@@ -12,7 +12,6 @@ export default function Home() {
       <Header />
       <ProblemHook />
       <TheRealProblem />
-      <ContadorRoi />
       <main className="flex-1"></main>
     </div>
   );
