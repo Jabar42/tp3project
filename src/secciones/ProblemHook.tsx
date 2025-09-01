@@ -1,3 +1,5 @@
+import ThreeMetrics from "@/components/ThreeMetrics";
+
 export default function ProblemHook() {
     return (
         <section className="py-20 bg-gray-50">
@@ -8,34 +10,15 @@ export default function ProblemHook() {
             </div>
             
             <h1 className="headline-font text-5xl md:text-6xl font-bold mb-8 text-gray-900 leading-tight">
-                Nuestra Metodología Científica Para 
-                <span className="text-red-600">Convertir Visitantes</span>
-                 en Compradores.
+            Este es el costo oculto de una página de producto mal diseñada.
             </h1>
             
             <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto text-readable">
-                No diseñamos páginas bonitas; ingeniamos máquinas de conversión basadas en datos, principios de persuasión y pruebas rigurosas. Descubre el proceso que aumenta el valor promedio de tus pedidos.
-                <strong>este mensaje puede cambiar tu vida.</strong>
+            Tus campañas pueden atraer miles de visitas. Pero si tu tasa de conversión se mantiene baja, estás literalmente quemando presupuesto publicitario y dejando ventas sobre la mesa.
             </p>
-
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="text-3xl font-bold text-red-600 mb-2">500%</div>
-                    <p className="text-gray-600 text-sm">Mejora máxima conseguida en un solo test A/B</p>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="text-3xl font-bold text-red-600 mb-2">+32%</div>
-                    <p className="text-gray-600 text-sm">Promedio de mejora relativa en conversiones de nuestros clientes</p>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="text-3xl font-bold text-red-600 mb-2">12,000+ tests</div>
-                    <p className="text-gray-600 text-sm">Experimentos analizados para perfeccionar nuestra metodología</p>
-                </div>
-            </div>
-
+            <ThreeMetrics />
             <p className="text-lg text-gray-700 font-medium">
-                Sigue leyendo para descubrir cómo 127 emprendedores han solucionado esto 
-                y multiplicado sus ingresos por 4 en menos de 90 días...
+            La diferencia entre un 2.0% y un 3.0% de conversión no parece dramática… hasta que aqui lo calculas en dinero real. 👇
             </p>
             </div>
         </div>
