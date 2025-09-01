@@ -1,8 +1,8 @@
-import AdvertorialBanner from "@/components/AdvertorialBanner";
-import Header from "@/components/Header";
-import ProblemHook from "@/components/ProblemHook";
-import TheRealProblem from "@/components/TheRealProblem";
-//import ContadorRoi from "@/components/ContadorRoi";
+import AdvertorialBanner from "@/secciones/AdvertorialBanner";
+import Header from "@/secciones/Header";
+import ProblemHook from "@/secciones/ProblemHook";
+import TheRealProblem from "@/secciones/TheRealProblem";
+//import ContadorRoi from "@/secciones/ContadorRoi";
 
 
 export default function Home() {
